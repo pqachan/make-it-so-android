@@ -18,7 +18,6 @@ package com.example.makeitso.screens.tasks
 
 enum class TaskActionOption(val title: String) {
   EditTask("Edit task"),
-  ToggleFlag("Toggle flag"),
   DeleteTask("Delete task");
 
   companion object {

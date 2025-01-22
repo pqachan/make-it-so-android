@@ -39,39 +39,49 @@ import java.lang.StringBuilder
 fun TaskItem(
   task: Task,
   options: List<String>,
-  onCheckChange: () -> Unit,
   onActionClick: (String) -> Unit
 ) {
   Card(
     backgroundColor = MaterialTheme.colors.background,
     modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
   ) {
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.fillMaxWidth(),
+    Column(
+      modifier = Modifier.fillMaxWidth().padding(8.dp),
     ) {
-      Checkbox(
-        checked = task.completed,
-        onCheckedChange = { onCheckChange() },
-        modifier = Modifier.padding(8.dp, 0.dp)
-      )
-
-      Column(modifier = Modifier.weight(1f)) {
-        Text(text = task.title, style = MaterialTheme.typography.subtitle2)
-        CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
-          Text(text = getDueDateAndTime(task), fontSize = 12.sp)
-        }
-      }
-
-      if (task.flag) {
-        Icon(
-          painter = painterResource(AppIcon.ic_flag),
-          tint = DarkOrange,
-          contentDescription = "Flag"
+      // Display due date at the top
+      if (task.hasDueDate() || task.hasDueTime()) {
+        Text(
+          text = getDueDateAndTime(task),
+          style = MaterialTheme.typography.body2,
+          color = MaterialTheme.colors.secondary,
+          modifier = Modifier.padding(bottom = 4.dp)
         )
       }
 
-      DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
+      // Display task title
+      Text(
+        text = task.title,
+        style = MaterialTheme.typography.subtitle2,
+        modifier = Modifier.padding(bottom = 2.dp)
+      )
+
+      // Display task description
+      Text(
+        text = task.description,
+        style = MaterialTheme.typography.body2,
+        color = MaterialTheme.colors.onBackground.copy(alpha = 0.7f)
+      )
+
+
+      Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+      ) {
+        Spacer(modifier = Modifier.weight(1f))
+
+        DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
+      }
     }
   }
 }

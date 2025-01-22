@@ -1,19 +1,3 @@
-/*
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
-
 package com.example.makeitso.screens.edit_task
 
 import androidx.appcompat.app.AppCompatActivity
@@ -55,11 +39,9 @@ fun EditTaskScreen(
     onDoneClick = { viewModel.onDoneClick(popUpScreen) },
     onTitleChange = viewModel::onTitleChange,
     onDescriptionChange = viewModel::onDescriptionChange,
-    onUrlChange = viewModel::onUrlChange,
     onDateChange = viewModel::onDateChange,
     onTimeChange = viewModel::onTimeChange,
-    onPriorityChange = viewModel::onPriorityChange,
-    onFlagToggle = viewModel::onFlagToggle,
+    //onPriorityChange = viewModel::onPriorityChange,
     activity = activity
   )
 }
@@ -72,11 +54,9 @@ fun EditTaskScreenContent(
   onDoneClick: () -> Unit,
   onTitleChange: (String) -> Unit,
   onDescriptionChange: (String) -> Unit,
-  onUrlChange: (String) -> Unit,
   onDateChange: (Long) -> Unit,
   onTimeChange: (Int, Int) -> Unit,
-  onPriorityChange: (String) -> Unit,
-  onFlagToggle: (String) -> Unit,
+  //onPriorityChange: (String) -> Unit,
   activity: AppCompatActivity?
 ) {
   Column(
@@ -98,12 +78,9 @@ fun EditTaskScreenContent(
     val fieldModifier = Modifier.fieldModifier()
     BasicField(AppText.title, task.title, onTitleChange, fieldModifier)
     BasicField(AppText.description, task.description, onDescriptionChange, fieldModifier)
-    BasicField(AppText.url, task.url, onUrlChange, fieldModifier)
 
     Spacer(modifier = Modifier.spacer())
     CardEditors(task, onDateChange, onTimeChange, activity)
-    CardSelectors(task, onPriorityChange, onFlagToggle)
-
     Spacer(modifier = Modifier.spacer())
   }
 }
@@ -125,25 +102,6 @@ private fun CardEditors(
   }
 }
 
-@Composable
-@ExperimentalMaterialApi
-private fun CardSelectors(
-  task: Task,
-  onPriorityChange: (String) -> Unit,
-  onFlagToggle: (String) -> Unit
-) {
-  val prioritySelection = Priority.getByName(task.priority).name
-  CardSelector(AppText.priority, Priority.getOptions(), prioritySelection, Modifier.card()) {
-    newValue ->
-    onPriorityChange(newValue)
-  }
-
-  val flagSelection = EditFlagOption.getByCheckedState(task.flag).name
-  CardSelector(AppText.flag, EditFlagOption.getOptions(), flagSelection, Modifier.card()) { newValue
-    ->
-    onFlagToggle(newValue)
-  }
-}
 
 private fun showDatePicker(activity: AppCompatActivity?, onDateChange: (Long) -> Unit) {
   val picker = MaterialDatePicker.Builder.datePicker().build()
@@ -168,9 +126,9 @@ private fun showTimePicker(activity: AppCompatActivity?, onTimeChange: (Int, Int
 @Composable
 fun EditTaskScreenPreview() {
   val task = Task(
-    title = "Task title",
-    description = "Task description",
-    flag = true
+    title = "Title",
+    description = "What happened today .."
+
   )
 
   MakeItSoTheme {
@@ -179,11 +137,9 @@ fun EditTaskScreenPreview() {
       onDoneClick = { },
       onTitleChange = { },
       onDescriptionChange = { },
-      onUrlChange = { },
       onDateChange = { },
       onTimeChange = { _, _ -> },
-      onPriorityChange = { },
-      onFlagToggle = { },
+      //onPriorityChange = { },
       activity = null
     )
   }

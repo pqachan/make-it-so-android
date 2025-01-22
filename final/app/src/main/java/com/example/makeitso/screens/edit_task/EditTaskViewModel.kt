@@ -54,10 +54,6 @@ class EditTaskViewModel @Inject constructor(
     task.value = task.value.copy(description = newValue)
   }
 
-  fun onUrlChange(newValue: String) {
-    task.value = task.value.copy(url = newValue)
-  }
-
   fun onDateChange(newValue: Long) {
     val calendar = Calendar.getInstance(TimeZone.getTimeZone(UTC))
     calendar.timeInMillis = newValue
@@ -70,10 +66,6 @@ class EditTaskViewModel @Inject constructor(
     task.value = task.value.copy(dueTime = newDueTime)
   }
 
-  fun onFlagToggle(newValue: String) {
-    val newFlagOption = EditFlagOption.getBooleanValue(newValue)
-    task.value = task.value.copy(flag = newFlagOption)
-  }
 
   fun onPriorityChange(newValue: String) {
     task.value = task.value.copy(priority = newValue)

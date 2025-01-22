@@ -52,7 +52,6 @@ fun TasksScreen(
     onAddClick = viewModel::onAddClick,
     onStatsClick = viewModel::onStatsClick,
     onSettingsClick = viewModel::onSettingsClick,
-    onTaskCheckChange = viewModel::onTaskCheckChange,
     onTaskActionClick = viewModel::onTaskActionClick,
     openScreen = openScreen
   )
@@ -70,7 +69,6 @@ fun TasksScreenContent(
   onAddClick: ((String) -> Unit) -> Unit,
   onStatsClick: ((String) -> Unit) -> Unit,
   onSettingsClick: ((String) -> Unit) -> Unit,
-  onTaskCheckChange: (Task) -> Unit,
   onTaskActionClick: ((String) -> Unit, Task, String) -> Unit,
   openScreen: (String) -> Unit
 ) {
@@ -105,7 +103,6 @@ fun TasksScreenContent(
           TaskItem(
             task = taskItem,
             options = options,
-            onCheckChange = { onTaskCheckChange(taskItem) },
             onActionClick = { action -> onTaskActionClick(openScreen, taskItem, action) }
           )
         }
@@ -120,7 +117,6 @@ fun TasksScreenContent(
 fun TasksScreenPreview() {
   val task = Task(
     title = "Task title",
-    flag = true,
     completed = true
   )
 
@@ -133,7 +129,6 @@ fun TasksScreenPreview() {
       onAddClick = { },
       onStatsClick = { },
       onSettingsClick = { },
-      onTaskCheckChange = { },
       onTaskActionClick = { _, _, _ -> },
       openScreen = { }
     )
