@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -38,8 +39,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.makeitso.common.composable.PermissionDialog
 import com.example.makeitso.common.composable.RationaleDialog
+import com.example.makeitso.common.snackbar.SnackbarManager
 import com.example.makeitso.screens.edit_task.EditTaskScreen
 import com.example.makeitso.screens.login.LoginScreen
+import com.example.makeitso.screens.main.MainScreen
+import com.example.makeitso.screens.quotes.QuotesScreen
 import com.example.makeitso.screens.settings.SettingsScreen
 import com.example.makeitso.screens.sign_up.SignUpScreen
 import com.example.makeitso.screens.splash.SplashScreen
@@ -77,7 +81,7 @@ fun MakeItSoApp() {
       ) { innerPaddingModifier ->
         NavHost(
           navController = appState.navController,
-          startDestination = SPLASH_SCREEN,
+          startDestination = MAIN_SCREEN,
           modifier = Modifier.padding(innerPaddingModifier)
         ) {
           makeItSoGraph(appState)
@@ -120,8 +124,20 @@ fun resources(): Resources {
 
 @ExperimentalMaterialApi
 fun NavGraphBuilder.makeItSoGraph(appState: MakeItSoAppState) {
+
+  composable(MAIN_SCREEN) {
+    MainScreen(
+      viewModel = hiltViewModel(),
+      clearAndNavigate = { route -> appState.clearAndNavigate(route) },
+      openScreen = { route -> appState.navigate(route) }
+    )
+  }
   composable(SPLASH_SCREEN) {
     SplashScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+  }
+
+  composable(QUOTES_SCREEN) {
+    QuotesScreen()
   }
 
   composable(SETTINGS_SCREEN) {

@@ -1,18 +1,3 @@
-/*
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
 
 package com.example.makeitso.screens.tasks
 
@@ -44,10 +29,22 @@ fun TaskItem(
   Card(
     backgroundColor = MaterialTheme.colors.background,
     modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+
   ) {
+
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(8.dp),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+      Spacer(modifier = Modifier.weight(1f))
+
+      DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
+    }
     Column(
       modifier = Modifier.fillMaxWidth().padding(8.dp),
     ) {
+
       // Display due date at the top
       if (task.hasDueDate() || task.hasDueTime()) {
         Text(
@@ -73,15 +70,7 @@ fun TaskItem(
       )
 
 
-      Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-      ) {
-        Spacer(modifier = Modifier.weight(1f))
 
-        DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
-      }
     }
   }
 }
