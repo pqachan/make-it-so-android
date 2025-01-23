@@ -43,6 +43,7 @@ import com.example.makeitso.common.snackbar.SnackbarManager
 import com.example.makeitso.screens.edit_task.EditTaskScreen
 import com.example.makeitso.screens.login.LoginScreen
 import com.example.makeitso.screens.main.MainScreen
+import com.example.makeitso.screens.profile.ProfileScreen
 import com.example.makeitso.screens.quotes.QuotesScreen
 import com.example.makeitso.screens.settings.SettingsScreen
 import com.example.makeitso.screens.sign_up.SignUpScreen
@@ -81,7 +82,7 @@ fun MakeItSoApp() {
       ) { innerPaddingModifier ->
         NavHost(
           navController = appState.navController,
-          startDestination = MAIN_SCREEN,
+          startDestination = TASKS_SCREEN,
           modifier = Modifier.padding(innerPaddingModifier)
         ) {
           makeItSoGraph(appState)
@@ -137,9 +138,17 @@ fun NavGraphBuilder.makeItSoGraph(appState: MakeItSoAppState) {
   }
 
   composable(QUOTES_SCREEN) {
-    QuotesScreen()
+    QuotesScreen(openScreen = { route -> appState.navigate(route) })
   }
 
+  composable(Routes.PROFILE_SCREEN) {
+    ProfileScreen(
+      navController = appState.navController,
+      onLogoutClick = { appState.clearAndNavigate(Routes.LOGIN_SCREEN) },
+      onProfileClick = { },
+      openScreen = { route -> appState.navigate(route) }
+    )
+  }
   composable(SETTINGS_SCREEN) {
     SettingsScreen(
       restartApp = { route -> appState.clearAndNavigate(route) },
@@ -152,7 +161,10 @@ fun NavGraphBuilder.makeItSoGraph(appState: MakeItSoAppState) {
   }
 
   composable(LOGIN_SCREEN) {
-    LoginScreen(openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) })
+    LoginScreen(
+      openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) },
+      openScreen = { route -> appState.navigate(route) }
+    )
   }
 
   composable(SIGN_UP_SCREEN) {
@@ -169,7 +181,8 @@ fun NavGraphBuilder.makeItSoGraph(appState: MakeItSoAppState) {
     })
   ) {
     EditTaskScreen(
-      popUpScreen = { appState.popUp() }
+      popUpScreen = { appState.popUp() },
+      openScreen = { route -> appState.navigate(route) }
     )
   }
 }

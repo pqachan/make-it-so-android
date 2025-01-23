@@ -1,22 +1,8 @@
-/*
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
 
 package com.example.makeitso.screens.sign_up
 
 import androidx.compose.runtime.mutableStateOf
+import com.example.makeitso.MAIN_SCREEN
 import com.example.makeitso.R.string as AppText
 import com.example.makeitso.SETTINGS_SCREEN
 import com.example.makeitso.SIGN_UP_SCREEN
@@ -38,13 +24,29 @@ class SignUpViewModel @Inject constructor(
   var uiState = mutableStateOf(SignUpUiState())
     private set
 
+  private val firstName
+    get() = uiState.value.firstName
+  private val lastName
+    get() = uiState.value.lastName
   private val email
     get() = uiState.value.email
   private val password
     get() = uiState.value.password
 
+  fun onFirstNameChange(newValue: String) {
+    uiState.value = uiState.value.copy(firstName = newValue)
+  }
+
+  fun onLastNameChange(newValue: String) {
+    uiState.value = uiState.value.copy(lastName = newValue)
+  }
+
   fun onEmailChange(newValue: String) {
     uiState.value = uiState.value.copy(email = newValue)
+  }
+
+  fun resetFields() {
+    uiState.value = SignUpUiState(firstName = "", lastName = "", email = "", password = "", repeatPassword = "")
   }
 
   fun onPasswordChange(newValue: String) {
@@ -73,7 +75,7 @@ class SignUpViewModel @Inject constructor(
 
     launchCatching {
       accountService.linkAccount(email, password)
-      openAndPopUp(SETTINGS_SCREEN, SIGN_UP_SCREEN)
+      openAndPopUp(MAIN_SCREEN, SIGN_UP_SCREEN)
     }
   }
 }

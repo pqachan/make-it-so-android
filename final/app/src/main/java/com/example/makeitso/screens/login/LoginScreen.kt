@@ -1,40 +1,30 @@
-/*
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
-
 package com.example.makeitso.screens.login
 
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.makeitso.R
 import com.example.makeitso.R.string as AppText
-import com.example.makeitso.common.composable.*
-import com.example.makeitso.common.ext.basicButton
-import com.example.makeitso.common.ext.fieldModifier
-import com.example.makeitso.common.ext.textButton
 import com.example.makeitso.theme.MakeItSoTheme
 
 @Composable
 fun LoginScreen(
   openAndPopUp: (String, String) -> Unit,
+  openScreen: (String) -> Unit,
   viewModel: LoginViewModel = hiltViewModel()
 ) {
   val uiState by viewModel.uiState
@@ -44,6 +34,7 @@ fun LoginScreen(
     onEmailChange = viewModel::onEmailChange,
     onPasswordChange = viewModel::onPasswordChange,
     onSignInClick = { viewModel.onSignInClick(openAndPopUp) },
+    onSignUpClick = { viewModel.onSignUpClick(openScreen) },
     onForgotPasswordClick = viewModel::onForgotPasswordClick
   )
 }
@@ -55,26 +46,65 @@ fun LoginScreenContent(
   onEmailChange: (String) -> Unit,
   onPasswordChange: (String) -> Unit,
   onSignInClick: () -> Unit,
+  onSignUpClick: () -> Unit,
   onForgotPasswordClick: () -> Unit
 ) {
-  BasicToolbar(AppText.login_details)
-
   Column(
-    modifier = modifier
-      .fillMaxWidth()
-      .fillMaxHeight()
-      .verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+    modifier = Modifier
+      .fillMaxSize()
+      .background(Color(0xFFB2FF59)) // Background color
+      .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center
   ) {
-    EmailField(uiState.email, onEmailChange, Modifier.fieldModifier())
-    PasswordField(uiState.password, onPasswordChange, Modifier.fieldModifier())
+    Image(
+      painter = painterResource(id = R.drawable.smiley),
+      contentDescription = "MySelf Logo",
+      modifier = Modifier.size(120.dp)
+    )
+    Text("MySelf", fontWeight = FontWeight.Bold, fontSize = 32.sp)
 
-    BasicButton(AppText.sign_in, Modifier.basicButton()) { onSignInClick() }
+    Spacer(modifier = Modifier.height(32.dp))
 
-    BasicTextButton(AppText.forgot_password, Modifier.textButton()) {
-      onForgotPasswordClick()
+    OutlinedTextField(
+      value = uiState.email,
+      onValueChange = onEmailChange,
+      label = { Text("Username / Email") },
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+      value = uiState.password,
+      onValueChange = onPasswordChange,
+      label = { Text("Password") },
+      visualTransformation = PasswordVisualTransformation(),
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(32.dp))
+
+    Button(
+      onClick = onSignInClick,
+      modifier = Modifier.fillMaxWidth(),
+      colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA)),
+      shape = RoundedCornerShape(8.dp)
+    ) {
+      Text("Login", color = Color.White)
     }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    TextButton(onClick = onForgotPasswordClick) {
+      Text("Forgot Password", color = Color(0xFF6200EA))
+    }
+
+    Spacer(modifier = Modifier.height(8.dp))
+    TextButton(onClick = onSignUpClick) {
+      Text("Don't have an account? Sign up", color = Color(0xFF6200EA))
+    }
+
   }
 }
 
@@ -91,6 +121,7 @@ fun LoginScreenPreview() {
       onEmailChange = { },
       onPasswordChange = { },
       onSignInClick = { },
+      onSignUpClick = { },
       onForgotPasswordClick = { }
     )
   }

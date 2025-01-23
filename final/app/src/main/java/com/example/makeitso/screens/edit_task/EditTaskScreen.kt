@@ -1,16 +1,20 @@
 package com.example.makeitso.screens.edit_task
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.makeitso.Routes
 import com.example.makeitso.R.drawable as AppIcon
 import com.example.makeitso.R.string as AppText
 import com.example.makeitso.common.composable.*
@@ -18,8 +22,8 @@ import com.example.makeitso.common.ext.card
 import com.example.makeitso.common.ext.fieldModifier
 import com.example.makeitso.common.ext.spacer
 import com.example.makeitso.common.ext.toolbarActions
-import com.example.makeitso.model.Priority
 import com.example.makeitso.model.Task
+import com.example.makeitso.screens.main.MainScreenViewModel
 import com.example.makeitso.theme.MakeItSoTheme
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.timepicker.MaterialTimePicker
@@ -29,21 +33,40 @@ import com.google.android.material.timepicker.TimeFormat
 @ExperimentalMaterialApi
 fun EditTaskScreen(
   popUpScreen: () -> Unit,
-  viewModel: EditTaskViewModel = hiltViewModel()
+  viewModel: EditTaskViewModel = hiltViewModel(),
+  menuviewModel: MainScreenViewModel = hiltViewModel(),
+  openScreen: (String) -> Unit
 ) {
   val task by viewModel.task
   val activity = LocalContext.current as AppCompatActivity
+  val selectedIndex = remember { mutableIntStateOf(0) }
 
-  EditTaskScreenContent(
-    task = task,
-    onDoneClick = { viewModel.onDoneClick(popUpScreen) },
-    onTitleChange = viewModel::onTitleChange,
-    onDescriptionChange = viewModel::onDescriptionChange,
-    onDateChange = viewModel::onDateChange,
-    onTimeChange = viewModel::onTimeChange,
-    //onPriorityChange = viewModel::onPriorityChange,
-    activity = activity
-  )
+  Scaffold(
+    bottomBar = {
+      com.example.makeitso.screens.main.BottomBar(selectedIndex.value) { index ->
+        selectedIndex.value = index
+        when (index) {
+          0 -> openScreen(Routes.TASKS_SCREEN)
+          1 -> openScreen(Routes.QUOTES_SCREEN)
+          2 -> openScreen(Routes.STATS_SCREEN)
+        }
+      }
+    }
+  ) { innerPadding ->
+    EditTaskScreenContent(
+      modifier = Modifier.padding(innerPadding),
+      task = task,
+      onDoneClick = { viewModel.onDoneClick(popUpScreen) },
+      onTitleChange = viewModel::onTitleChange,
+      onDescriptionChange = viewModel::onDescriptionChange,
+      onDateChange = viewModel::onDateChange,
+      onTimeChange = viewModel::onTimeChange,
+      openMainScreen = { menuviewModel.openMainScreen(openScreen) },
+      openStatsScreen = { menuviewModel.openStatsScreen(openScreen) },
+      openQuotesScreen = { menuviewModel.openQuotesScreen(openScreen) },
+      activity = activity
+    )
+  }
 }
 
 @Composable
@@ -56,13 +79,16 @@ fun EditTaskScreenContent(
   onDescriptionChange: (String) -> Unit,
   onDateChange: (Long) -> Unit,
   onTimeChange: (Int, Int) -> Unit,
-  //onPriorityChange: (String) -> Unit,
+  openMainScreen: () -> Unit,
+  openStatsScreen: () -> Unit,
+  openQuotesScreen: () -> Unit,
   activity: AppCompatActivity?
 ) {
   Column(
     modifier = modifier
       .fillMaxWidth()
       .fillMaxHeight()
+      .background(Color(0xFFB2FF59))
       .verticalScroll(rememberScrollState()),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
@@ -140,7 +166,11 @@ fun EditTaskScreenPreview() {
       onDateChange = { },
       onTimeChange = { _, _ -> },
       //onPriorityChange = { },
-      activity = null
+      activity = null,
+      openMainScreen = {},
+      openStatsScreen = {},
+      openQuotesScreen = {}
+
     )
   }
 }

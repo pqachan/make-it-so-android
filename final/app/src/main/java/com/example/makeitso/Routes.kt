@@ -1,6 +1,7 @@
 package com.example.makeitso
 
 object Routes {
+    const val PROFILE_SCREEN = "ProfileScreen"
     const val SPLASH_SCREEN = "SplashScreen"
     const val SETTINGS_SCREEN = "SettingsScreen"
     const val LOGIN_SCREEN = "LoginScreen"

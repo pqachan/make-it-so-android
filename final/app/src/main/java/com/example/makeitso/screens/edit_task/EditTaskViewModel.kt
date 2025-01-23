@@ -67,10 +67,6 @@ class EditTaskViewModel @Inject constructor(
   }
 
 
-  fun onPriorityChange(newValue: String) {
-    task.value = task.value.copy(priority = newValue)
-  }
-
   fun onDoneClick(popUpScreen: () -> Unit) {
     launchCatching {
       val editedTask = task.value

@@ -1,29 +1,18 @@
-/*
-Copyright 2022 Google LLC
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
- */
-
 package com.example.makeitso.screens.sign_up
 
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.makeitso.Routes
 import com.example.makeitso.R.string as AppText
 import com.example.makeitso.common.composable.*
 import com.example.makeitso.common.ext.basicButton
@@ -42,7 +31,9 @@ fun SignUpScreen(
     onEmailChange = viewModel::onEmailChange,
     onPasswordChange = viewModel::onPasswordChange,
     onRepeatPasswordChange = viewModel::onRepeatPasswordChange,
-    onSignUpClick = { viewModel.onSignUpClick(openAndPopUp) }
+    onSignUpClick = { viewModel.onSignUpClick(openAndPopUp) },
+    onBackClick = { openAndPopUp(Routes.LOGIN_SCREEN, Routes.SIGN_UP_SCREEN) },
+    onResetClick = { viewModel.resetFields() }
   )
 }
 
@@ -53,26 +44,70 @@ fun SignUpScreenContent(
   onEmailChange: (String) -> Unit,
   onPasswordChange: (String) -> Unit,
   onRepeatPasswordChange: (String) -> Unit,
-  onSignUpClick: () -> Unit
+  onSignUpClick: () -> Unit,
+  onBackClick: () -> Unit,
+  onResetClick: () -> Unit
 ) {
-  val fieldModifier = Modifier.fieldModifier()
-
-  BasicToolbar(AppText.create_account)
-
   Column(
-    modifier = modifier
-      .fillMaxWidth()
-      .fillMaxHeight()
-      .verticalScroll(rememberScrollState()),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally
+    modifier = Modifier
+      .fillMaxSize()
+      .background(Color(0xFFB2FF59))
+      .padding(32.dp),
+    horizontalAlignment = Alignment.CenterHorizontally,
+    verticalArrangement = Arrangement.Center
   ) {
-    EmailField(uiState.email, onEmailChange, fieldModifier)
-    PasswordField(uiState.password, onPasswordChange, fieldModifier)
-    RepeatPasswordField(uiState.repeatPassword, onRepeatPasswordChange, fieldModifier)
 
-    BasicButton(AppText.create_account, Modifier.basicButton()) {
-      onSignUpClick()
+    Text("SignUp", fontWeight = FontWeight.Bold, fontSize = 36.sp)
+
+    Spacer(modifier = Modifier.height(32.dp))
+
+    OutlinedTextField(
+      value = uiState.email,
+      onValueChange = onEmailChange,
+      label = { Text("Email") },
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+      value = uiState.password,
+      onValueChange = onPasswordChange,
+      label = { Text("Password") },
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    OutlinedTextField(
+      value = uiState.repeatPassword,
+      onValueChange = onRepeatPasswordChange,
+      label = { Text("Repeat Password") },
+      modifier = Modifier.fillMaxWidth()
+    )
+
+    Spacer(modifier = Modifier.height(32.dp))
+
+    Row(
+      modifier = Modifier.fillMaxWidth(),
+      horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+      Button(
+        onClick = onSignUpClick,
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6200EA))
+      ) {
+        Text("Register", color = Color.White)
+      }
+
+      OutlinedButton(onClick = onResetClick) {
+        Text("Reset")
+      }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Button(onClick = onBackClick) {
+      Text("Back")
     }
   }
 }
@@ -81,7 +116,9 @@ fun SignUpScreenContent(
 @Composable
 fun SignUpScreenPreview() {
   val uiState = SignUpUiState(
-    email = "email@test.com"
+    email = "email@test.com",
+    password = "password123",
+    repeatPassword = "password123"
   )
 
   MakeItSoTheme {
@@ -90,7 +127,9 @@ fun SignUpScreenPreview() {
       onEmailChange = { },
       onPasswordChange = { },
       onRepeatPasswordChange = { },
-      onSignUpClick = { }
+      onSignUpClick = { },
+      onResetClick = { },
+      onBackClick = { }
     )
   }
 }

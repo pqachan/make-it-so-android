@@ -18,6 +18,7 @@ package com.example.makeitso.screens.tasks
 
 import androidx.compose.runtime.mutableStateOf
 import com.example.makeitso.EDIT_TASK_SCREEN
+import com.example.makeitso.Routes
 import com.example.makeitso.SETTINGS_SCREEN
 import com.example.makeitso.STATS_SCREEN
 import com.example.makeitso.TASK_ID
@@ -46,9 +47,25 @@ class TasksViewModel @Inject constructor(
 
   fun onAddClick(openScreen: (String) -> Unit) = openScreen(EDIT_TASK_SCREEN)
 
-  fun onSettingsClick(openScreen: (String) -> Unit) = openScreen(SETTINGS_SCREEN)
+  fun onProfileClick(openScreen: (String) -> Unit) {
+    openScreen(Routes.PROFILE_SCREEN)
+  }
 
-  fun onStatsClick(openScreen: (String) -> Unit) = openScreen(STATS_SCREEN)
+  fun openProfileScreen(openScreen: (String) -> Unit) {
+    openScreen(Routes.PROFILE_SCREEN)
+  }
+
+  fun openMainScreen(openScreen: (String) -> Unit) {
+    openScreen(Routes.MAIN_SCREEN)
+  }
+
+  fun openStatsScreen(openScreen: (String) -> Unit) {
+    openScreen(Routes.STATS_SCREEN)
+  }
+
+  fun openQuotesScreen(openScreen: (String) -> Unit) {
+    openScreen(Routes.QUOTES_SCREEN)
+  }
 
   fun onTaskActionClick(openScreen: (String) -> Unit, task: Task, action: String) {
     when (TaskActionOption.getByTitle(action)) {

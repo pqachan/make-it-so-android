@@ -1,35 +1,20 @@
 package com.example.makeitso.screens.main
 
-//import android.R
-
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -39,196 +24,161 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.makeitso.R
-import com.example.makeitso.model.User
+import com.example.makeitso.Routes
+import com.example.makeitso.model.Task
+import com.example.makeitso.screens.tasks.TaskItem
+import com.example.makeitso.screens.tasks.TasksViewModel
 import com.example.makeitso.theme.MakeItSoTheme
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     viewModel: MainScreenViewModel = hiltViewModel(),
+    taskviewModel: TasksViewModel = hiltViewModel(),
     clearAndNavigate: (String) -> Unit,
-    openScreen: (String) -> Unit,
+    openScreen: (String) -> Unit
 ) {
     val selectedIndex = remember { mutableIntStateOf(0) }
 
-    MainScreenContent(
-        openTasksScreen = { viewModel.openTasksScreen(openScreen) },
-        openStatsScreen = { viewModel.openStatsScreen(openScreen) },
-        openQuotesScreen = { viewModel.openQuotesScreen(openScreen) },
-        onLogoutClick = { viewModel.onLogoutClick(clearAndNavigate) }
-    )
-}
+    val tasks = taskviewModel.tasks.collectAsStateWithLifecycle(emptyList())
+    val options by taskviewModel.options
 
+    Scaffold(
+        topBar = {
+            TopBar(
+                onProfileClick = { viewModel.onProfileClick(openScreen) }
+            )
+        },
+        bottomBar = {
+            BottomBar(selectedIndex.value) { index ->
+                selectedIndex.value = index
+                when (index) {
+                    0 -> openScreen(Routes.MAIN_SCREEN)
+                    1 -> openScreen(Routes.QUOTES_SCREEN)
+                    2 -> openScreen(Routes.STATS_SCREEN)
+                }
+            }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { viewModel.onAddClick(openScreen) },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
+                Icon(Icons.Default.Create, contentDescription = "Add Note")
+            }
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFB2FF59))
+                .padding(innerPadding)
+        ) {
+            MainScreenContent(
+                modifier = Modifier.padding(16.dp),
+                tasks = tasks.value,
+                options = options,
+                openTasksScreen = { viewModel.openTasksScreen(openScreen) },
+                openStatsScreen = { viewModel.openStatsScreen(openScreen) },
+                openQuotesScreen = { viewModel.openQuotesScreen(openScreen) },
+                onAddClick = { viewModel.onAddClick(openScreen) },
+                onTaskActionClick = viewModel::onTaskActionClick,
+                onProfileClick = { viewModel.openProfileScreen(openScreen) },
+                openScreen = openScreen
+            )
+
+            LaunchedEffect(viewModel) { viewModel.loadTaskOptions() }
+        }
+    }
+}
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreenContent(
+    modifier: Modifier = Modifier,
+    tasks: List<Task>,
+    options: List<String>,
+    onTaskActionClick: ((String) -> Unit, Task, String) -> Unit,
+    onAddClick: ((String) -> Unit) -> Unit,
+    openScreen: (String) -> Unit,
     openTasksScreen: () -> Unit,
     openStatsScreen: () -> Unit,
     openQuotesScreen: () -> Unit,
-    onLogoutClick: () -> Unit
+    onProfileClick: () -> Unit
 ) {
-
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(Color(0xFF5FB1B7), Color(0xFF8E9A9B))
-                )
-            )
-            .padding(0.dp, 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Myself",
+            text = "Welcome to MySelf",
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp,
-            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(bottom = 32.dp)
-        ) {
 
-
-        }
-
-        ElevatedCard(
-            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-            modifier = Modifier.size(width = 380.dp, height = 450.dp)
-        ) {
-            Column(
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-                    Column(
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.quotes),
-                            contentDescription = "quotesIcon",
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(50.dp)
-                                .clickable { openTasksScreen() }
-                        )
-                        Text(
-                            text = "Add Notes",
-                            fontSize = 16.sp
-                        )
-                    }
-
-
-
-                    Column(
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.chart),
-                            contentDescription = "chartIcon",
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(50.dp)
-                                .clickable { openStatsScreen() }
-                        )
-                        Text(
-                            text = "Statistic",
-                            fontSize = 16.sp
-                        )
-                    }
-
-
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-                    Column(
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(8.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.baseline_card_giftcard_24),
-                            contentDescription = "WaterIntIcon",
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .padding(end = 10.dp)
-                                .size(50.dp)
-                                .clickable { openQuotesScreen() }
-                        )
-                        Text(
-                            text = "Daily Quotes",
-                            fontSize = 16.sp
-                        )
-                    }
-
-
-                }
-
-
+        LazyColumn {
+            items(tasks, key = { it.id }) { taskItem ->
+                TaskItem(
+                    task = taskItem,
+                    options = options,
+                    onActionClick = { action -> onTaskActionClick(openScreen, taskItem, action ) }
+                )
             }
-        }
-
-        Spacer(Modifier.height(50.dp))
-
-        // Logout Button
-        Button(
-            onClick = { onLogoutClick() },
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally),
-            colors = ButtonDefaults.buttonColors(Color.Black)
-        ) {
-            Text(text = "Logout")
         }
     }
 }
 
-
 @Composable
-fun OptionButton(
-    optionName: String,
-    onClick: () -> Unit
-) {
-    Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(50),
-        colors = ButtonDefaults.buttonColors(Color.Black),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
+fun BottomBar(selectedIndex: Int, onItemSelected: (Int) -> Unit) {
+    NavigationBar(
+        containerColor = Color.White,
+        tonalElevation = 5.dp
     ) {
-        Text(
-            text = optionName,
-            fontSize = 16.sp,
-            color = Color.White
+        NavigationBarItem(
+            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+            label = { Text("Home") },
+            selected = selectedIndex == 0,
+            onClick = { onItemSelected(0) }
+        )
+        NavigationBarItem(
+            icon = { Icon(painterResource(id = R.drawable.quotes), contentDescription = "Quotes") },
+            label = { Text("Quotes") },
+            selected = selectedIndex == 1,
+            onClick = { onItemSelected(1) }
+        )
+        NavigationBarItem(
+            icon = { Icon(painterResource(id = R.drawable.chart), contentDescription = "Stats") },
+            label = { Text("Stats") },
+            selected = selectedIndex == 2,
+            onClick = { onItemSelected(2) }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(
+    onProfileClick: () -> Unit
+
+) {
+    TopAppBar(
+        title = { Text("MySelf") },
+        actions = {
+            IconButton(onClick = onProfileClick) {
+                Icon(painter = painterResource(id = R.drawable.profile), contentDescription = "Profile")
+            }
+        }
+    )
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
     MakeItSoTheme {
-        MainScreenContent(
-            openTasksScreen = { },
-            openStatsScreen = { },
-            openQuotesScreen = { },
-            onLogoutClick = { }
+        MainScreen(
+            clearAndNavigate = { },
+            openScreen = { }
         )
     }
 }

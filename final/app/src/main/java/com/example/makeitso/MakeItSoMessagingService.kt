@@ -41,7 +41,7 @@ class MakeItSoMessagingService : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(message.title)
             .setContentText(message.body)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.smiley)
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 

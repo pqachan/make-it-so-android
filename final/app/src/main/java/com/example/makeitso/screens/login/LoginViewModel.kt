@@ -18,6 +18,8 @@ package com.example.makeitso.screens.login
 
 import androidx.compose.runtime.mutableStateOf
 import com.example.makeitso.LOGIN_SCREEN
+import com.example.makeitso.MAIN_SCREEN
+import com.example.makeitso.Routes
 import com.example.makeitso.R.string as AppText
 import com.example.makeitso.SETTINGS_SCREEN
 import com.example.makeitso.common.ext.isValidEmail
@@ -45,6 +47,15 @@ class LoginViewModel @Inject constructor(
     uiState.value = uiState.value.copy(email = newValue)
   }
 
+  fun onSignUpClick(openScreen: (String) -> Unit) {
+    openScreen(Routes.SIGN_UP_SCREEN)
+
+  }
+
+fun openTasksScreen(openScreen: (String) -> Unit) {
+  openScreen(Routes.TASKS_SCREEN)
+}
+
   fun onPasswordChange(newValue: String) {
     uiState.value = uiState.value.copy(password = newValue)
   }
@@ -62,7 +73,7 @@ class LoginViewModel @Inject constructor(
 
     launchCatching {
       accountService.authenticate(email, password)
-      openAndPopUp(SETTINGS_SCREEN, LOGIN_SCREEN)
+      openAndPopUp(MAIN_SCREEN, LOGIN_SCREEN)
     }
   }
 
